@@ -2,6 +2,8 @@ package prodcons;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class Test {
 
@@ -21,25 +23,10 @@ public class Test {
 		
 		BlockingQueue<Integer> queue = new MyArrayBlockingQueue<Integer>(100);
 		//BlockingQueue<Integer> queue = new ArrayBlockingQueue<>(100);
-		Thread prodTh1 = new Thread(new SimpleProducer(queue, 5));
-		prodTh1.start();
-		Thread prodTh2 = new Thread(new SimpleProducer(queue, 7));
-		prodTh2.start();
-		Thread consTh1 = new Thread(new SimpleConsumer(queue));
-		consTh1.start();
-		Thread consTh2 = new Thread(new SimpleConsumer(queue));
-		consTh2.start();
-		Thread consTh3 = new Thread(new SimpleConsumer(queue));
-		consTh3.start();
-		try {
-			prodTh2.join();
-			consTh1.join();
-			consTh2.join();
-			consTh3.join();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		Executor exec = Executors.newCachedThreadPool();
+		exec.execute(new SimpleProducer(queue, 5));
+		exec.execute(new SimpleProducer(queue, 7));
+		exec.execute(new SimpleConsumer(queue));
 	}
 
 }
